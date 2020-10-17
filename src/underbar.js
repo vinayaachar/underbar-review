@@ -303,6 +303,14 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var result = {};
+    return function(){
+      var arg = JSON.stringify(arguments);
+      if(!result[arg]){
+        result[arg] = func.apply(this, arguments);
+      }
+      return result[arg];
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -312,6 +320,12 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var a = arguments[2];
+    var b = arguments[3];
+    var tempFunc = function() {
+      func(a,b);
+    };
+    setTimeout(tempFunc, wait);
   };
 
 
@@ -321,11 +335,27 @@
    */
 
   // Randomizes the order of an array's contents.
-  //
   // TIP: This function's test suite will ask that you not modify the original
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
+  // 1. Random generator
+    // Produce an index which is between 0 and length of the array
+  // 2. Current index
+  // 3. temp index = Random generator
+  // 4. Shuffle current and temp
   _.shuffle = function(array) {
+    var arr_copy =array.slice(0);
+    var tempValue , randomIndex;
+    var currentIndex = array.length;
+
+    while(currentIndex !== 0){
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      tempValue = arr_copy[currentIndex];
+      arr_copy[currentIndex]= arr_copy[randomIndex];
+      arr_copy[randomIndex] = tempValue;
+    }
+    return arr_copy;
   };
 
 
